@@ -14,7 +14,7 @@
 	
 	作用: 梅林路由器专用，发送/routerinfo 给机器人查询路由器ip等信息
 	安装: 1.Routerinfo.js填上路由器相关信息,并将文件放到青龙
-		  2.Router.py第17行的文件路径(默认是/ql/scripts/)
+		  2.Router.py第17行的文件路径(默认是/ql/scripts/),安装nodejs依赖ssh2
 		  3.将修改后的Router.py文件放于ql\jbot\diy(有些人需要放在ql\repo\dockerbot\jbot\diy)
 		  4.重启机器人即可生效		 
 	
@@ -22,7 +22,7 @@
 
 	作用: 梅林路由器专用，发送/routerip 给机器人通知路由器重新拨号换IP.
 	安装: 1.修改RouterResetIP.js填上路由器相关信息,并将文件放到青龙
-		  2.修改RouterResetIP.py第17行的文件路径(默认是/ql/scripts/)
+		  2.修改RouterResetIP.py第17行的文件路径(默认是/ql/scripts/),安装nodejs依赖ssh2
 		  3.将修改后的RouterResetIP.py文件放于ql\jbot\diy(有些人需要放在ql\repo\dockerbot\jbot\diy)
 		  4.重启机器人即可生效
 

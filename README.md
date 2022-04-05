@@ -26,8 +26,9 @@
 		  3.将修改后的RouterResetIP.py文件放于ql\jbot\diy(有些人需要放在ql\repo\dockerbot\jbot\diy)
 		  4.重启机器人即可生效
 
-# 4.Bean_ccwav.py (因为使用了青龙变量，所以V4无法使用)
+# 4.Bean_ccwav.py
 
+	(甘露殿狗哥测试了V4可以正常使用........)
 	作用: 调用资产查询脚本查询对应CK的资产信息. 支持/ccbean 和 /ccbean CK序号 两种格式.
 	安装: 1.修改Bean_ccwav.py第69行的bot_jd_bean_change.js路径，这个文件我放在QLScript2仓库了
 		  2.文件放于ql\jbot\diy(有些人需要放在ql\repo\dockerbot\jbot\diy),重启机器人即可生效.

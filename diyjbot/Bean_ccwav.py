@@ -64,8 +64,7 @@ async def CCBeanInfo(event):
         if change!="":
             await jdbot.delete_messages(chat_id, msg)
             msg = await jdbot.send_message(chat_id, change+'开始查询账号'+text+'的资产，请稍后...')
-        else:
-            msg = await jdbot.send_message(chat_id, '开始查询账号'+text+'的资产，请稍后...')
+        
         cmdtext="task /ql/repo/ccwav_QLScript2/bot_jd_bean_change.js now"        
         p = await asyncio.create_subprocess_shell(
             cmdtext, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)

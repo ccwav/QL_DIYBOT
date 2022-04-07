@@ -15,7 +15,7 @@ async def CCBeanInfo(event):
         text = None  
     
     if text==None:
-        await user.send_message(event.chat_id,'请指定要查询的账号,格式: ccbean 1 或 ccbean ptpin')
+        await user.send_message(event.chat_id,'请指定要查询的账号,格式: cb 1 或 cb ptpin')
         return    
         
     key="BOTCHECKCODE"

@@ -26,7 +26,7 @@
 		  3.将修改后的RouterResetIP.py文件放于ql\jbot\diy(有些人需要放在ql\repo\dockerbot\jbot\diy)
 		  4.重启机器人即可生效
 
-# 4.Bean_ccwav.py
+# 4.diyjbot\Bean_ccwav.py
 
 	(甘露殿狗哥测试了V4可以正常使用........)
 	作用: 调用资产查询脚本查询对应CK的资产信息. 支持/ccbean 和 /ccbean CK序号 两种格式.
@@ -35,13 +35,21 @@
 		  
 	特殊变量: BEANCHANGE_BOTDISABLELIST 可以关闭某些查询的项目提高速度,按需删减
 	export BEANCHANGE_BOTDISABLELIST="过期京豆&查优惠券&汪汪乐园&京东赚赚&京东秒杀&东东农场&极速金币&京喜牧场&京喜工厂&京东工厂&领现金&喜豆查询&金融养猪&东东萌宠"
-	
-# 5.bean.py
+
+# 5.bot\ccbean_ccwav.py (全局版本)
+
+	Bean_ccwav.py的全局版本
+	安装: 1.ccbean_ccwav.py第41行的bot_jd_bean_change.js路径，这个文件我放在QLScript2仓库了
+		  2.文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
+		  
+# 6.bean.py
 
 	作用: 增强原有的/bean,不带序号时弹出按钮
 	安装: 文件放于ql\jbot\bot(有些人需要放在ql\repo\dockerbot\jbot\bot),重启机器人即可生效.
 
-# 6.chart.py
+# 7.chart.py
 
 	作用: 增强原有的/chart,不带序号时弹出按钮
 	安装: 文件放于ql\jbot\bot(有些人需要放在ql\repo\dockerbot\jbot\bot),重启机器人即可生效.
+	
+

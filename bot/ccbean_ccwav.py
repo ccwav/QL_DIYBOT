@@ -5,7 +5,7 @@ from .. import jdbot
 from ..bot.utils import cmd, TASK_CMD,split_list, press_event
 from ..diy.utils import read, write
 import asyncio
-
+import re
 @user.on(events.NewMessage(pattern=r'^ccbean', outgoing=True))
 async def CCBeanInfo(event):
     msg_text= event.raw_text.split(' ')

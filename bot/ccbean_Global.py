@@ -6,7 +6,7 @@ from ..bot.utils import cmd, TASK_CMD,split_list, press_event
 from ..diy.utils import read, write
 import asyncio
 import re
-@user.on(events.NewMessage(pattern=r'^ccbean', outgoing=True))
+@user.on(events.NewMessage(pattern=r'^cb', outgoing=True))
 async def CCBeanInfo(event):
     msg_text= event.raw_text.split(' ')
     if isinstance(msg_text, list) and len(msg_text) == 2:
@@ -34,9 +34,9 @@ async def CCBeanInfo(event):
             write(configs)
                 
     if change!="":
-        await user.send_message(event.chat_id, change+'开始查询账号'+text+'的资产，请稍后...')
+        notification = await user.send_message(event.chat_id, change+'开始查询账号'+text+'的资产，请稍后...')
     else:
-        await user.send_message(event.chat_id, '开始查询账号'+text+'的资产，请稍后...')
+        notification = await user.send_message(event.chat_id, '开始查询账号'+text+'的资产，请稍后...')
         
     cmdtext="task /ql/repo/ccwav_QLScript2/bot_jd_bean_change.js now"        
     p = await asyncio.create_subprocess_shell(
@@ -51,6 +51,8 @@ async def CCBeanInfo(event):
                 strReturn=strReturn+line+'\n'
                     
     if strReturn:
+        await notification.delete()
         await user.send_message(event.chat_id, strReturn)
     else:
+        await notification.delete()
         await user.send_message(event.chat_id,'查询失败!')

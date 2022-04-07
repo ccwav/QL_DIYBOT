@@ -36,10 +36,10 @@
 	特殊变量: BEANCHANGE_BOTDISABLELIST 可以关闭某些查询的项目提高速度,按需删减
 	export BEANCHANGE_BOTDISABLELIST="过期京豆&查优惠券&汪汪乐园&京东赚赚&京东秒杀&东东农场&极速金币&京喜牧场&京喜工厂&京东工厂&领现金&喜豆查询&金融养猪&东东萌宠"
 
-# 5.bot\ccbean_ccwav.py (全局版本)
+# 5.bot\ccbean_Global.py (全局版本)
 
-	Bean_ccwav.py的全局版本，tg任何群使用ccbean CK序号或ccbean ptpin两种格式查询资产.
-	安装: 1.ccbean_ccwav.py第41行的bot_jd_bean_change.js路径，这个文件我放在QLScript2仓库了
+	Bean_ccwav.py的全局版本，tg任何群使用cb CK序号或cb ptpin两种格式查询资产.
+	安装: 1.ccbean_Global.py第41行的bot_jd_bean_change.js路径，这个文件我放在QLScript2仓库了
 		  2.文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
 		  
 # 6.bean.py

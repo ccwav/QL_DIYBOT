@@ -38,7 +38,7 @@
 
 # 5.bot\ccbean_ccwav.py (全局版本)
 
-	Bean_ccwav.py的全局版本
+	Bean_ccwav.py的全局版本，tg任何群使用ccbean CK序号或ccbean ptpin两种格式查询资产.
 	安装: 1.ccbean_ccwav.py第41行的bot_jd_bean_change.js路径，这个文件我放在QLScript2仓库了
 		  2.文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
 		  

@@ -721,7 +721,8 @@ function TotalBean() {
 
 						}
 						if (data['retcode'] === '0' && data.data && data.data['assetInfo']) {
-							$.beanCount = data.data && data.data['assetInfo']['beanNum'];
+							if ($.beanCount == 0)
+								$.beanCount = data.data && data.data['assetInfo']['beanNum'];
 						} else {
 							$.errorMsg = `数据异常`;
 						}
@@ -769,7 +770,6 @@ function TotalBean2() {
 								$.nickName = userInfo.petName;
 							if ($.beanCount == 0) {
 								$.beanCount = userInfo.jingBean;
-								$.isPlusVip = 3;
 							}
 							$.JingXiang = userInfo.uclass;
 						}
@@ -1980,6 +1980,7 @@ Date.prototype.Format = function (fmt) {
 }
 
 function decrypt(time, stk, type, url) {
+	$.appId = 10028;
 	stk = stk || (url ? getJxmcUrlData(url, '_stk') : '')
 		if (stk) {
 			const timestamp = new Date(time).Format("yyyyMMddhhmmssSSS");

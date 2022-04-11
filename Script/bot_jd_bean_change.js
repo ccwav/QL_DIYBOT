@@ -538,8 +538,7 @@ async function bean() {
 	yesterdayArr = [],
 	todayArr = [];
 	do {
-		let response = await getJingBeanBalanceDetail(page);
-		await $.wait(2000);
+		let response = await getJingBeanBalanceDetail(page);		
 		// console.log(`第${page}页: ${JSON.stringify(response)}`);
 		if (response && response.code === "0") {
 			page++;

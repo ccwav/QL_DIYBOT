@@ -15,7 +15,7 @@ async def CCBeanInfo(event):
         text = None  
     
     if text==None:
-        await user.send_message(event.chat_id,'请指定要查询的账号,格式: cb 1 或 cb ptpin')
+        await event.edit('请指定要查询的账号,格式: cb 1 或 cb ptpin')
         return    
         
     key="BOTCHECKCODE"
@@ -33,10 +33,8 @@ async def CCBeanInfo(event):
             change += f"【新增】环境变量:`{kv}`\n"  
             write(configs)
                 
-    if change!="":
-        notification = await user.send_message(event.chat_id, change+'开始查询账号'+text+'的资产，请稍后...')
-    else:
-        notification = await user.send_message(event.chat_id, '开始查询账号'+text+'的资产，请稍后...')
+
+    await event.edit('开始查询账号'+text+'的资产，请稍后...')
         
     cmdtext="task /ql/repo/ccwav_QLScript2/bot_jd_bean_change.js now"        
     p = await asyncio.create_subprocess_shell(
@@ -51,8 +49,8 @@ async def CCBeanInfo(event):
                 strReturn=strReturn+line+'\n'
                     
     if strReturn:
-        await notification.delete()
+        await event.delete()
         await user.send_message(event.chat_id, strReturn)
     else:
-        await notification.delete()
+        await event.delete()
         await user.send_message(event.chat_id,'查询失败!')

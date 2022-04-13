@@ -24,45 +24,46 @@ async def bot_bean(event):
         text = None  
     
     if text==None:
-        await user.send_message(event.chat_id,'请指定要查询的账号,格式: bb 1 或 bb ptpin')
+        await event.edit('请指定要查询的账号,格式: bb 1 或 bb ptpin')
         return    
     else:
-        notification = await user.send_message(event.chat_id, '开始查询账号'+text+'的资产，请稍后...')
+        await event.edit('开始查询账号'+text+'的资产，请稍后...')
     
     if V4 and text == 'in':
         subprocess.check_output(
             'jcsv', shell=True, stderr=subprocess.STDOUT)
         creat_bean_counts(BEAN_IN_FILE)
+        await event.delete()
         await user.send_message(event.chat_id, '您的近日收入情况', file=BEAN_IMG)
         
     elif V4 and text == 'out':
         subprocess.check_output(
             'jcsv', shell=True, stderr=subprocess.STDOUT)
         creat_bean_counts(BEAN_OUT_FILE)
-        await notification.delete()
+        await event.delete()
         await user.send_message(event.chat_id, '您的近日支出情况', file=BEAN_IMG)
         
     elif not V4 and (text == 'in' or text == 'out' or text is None):
-        await notification.delete()
+        await event.delete()
         await user.send_message(event.chat_id,'QL暂不支持使用bean in、out ,请使用/bean n n为数字')
         
     elif text and int(text):
         res = get_bean_data(int(text))
         if res['code'] != 200:
-            await notification.delete()
+            await event.delete()
             await user.send_message(event.chat_id, f'something wrong,I\'m sorry\n{str(res["data"])}')
         else:
             creat_bean_count(res['data'][3], res['data'][0], res['data'][1], res['data'][2][1:])
-            await notification.delete()
+            await event.delete()
             await user.send_message(event.chat_id, f'您的账号{text}收支情况', file=BEAN_IMG)
     elif not text:
         subprocess.check_output(
             'jcsv', shell=True, stderr=subprocess.STDOUT)
         creat_bean_counts(BEAN_TOTAL_FILE)
-        await notification.delete()
+        await event.delete()
         await user.send_message(event.chat_id, '您的总京豆情况', file=BEAN_IMG)
     else:
-        await notification.delete()
+        await event.delete()
         await user.send_message(event.chat_id, '青龙暂仅支持/bean n n为账号数字') 
 
 

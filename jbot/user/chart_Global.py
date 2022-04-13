@@ -17,19 +17,19 @@ async def my_chartinfo(event):
         text = None  
     
     if text==None:
-        await user.send_message(event.chat_id,'请指定要查询的账号,格式: bc 1 或 bc ptpin')
+        await event.edit('请指定要查询的账号,格式: bc 1 或 bc ptpin')
         return    
     else:
-        notification = await user.send_message(event.chat_id, '开始查询账号'+text+'的资产，请稍后...')
+        await event.edit('开始查询账号'+text+'的资产，请稍后...')
     
     if text and int(text):
         res = get_bean_data(int(text))
         if res['code'] != 200:
-            await notification.delete()
+            await event.delete()
             await user.send_message(event.chat_id,f'something wrong,I\'m sorry\n{str(res["data"])}')
         else:
             creat_chart(res['data'][3], f'账号{str(text)}',res['data'][0], res['data'][1], res['data'][2][1:])
-            await notification.delete()
+            await event.delete()
             await user.send_message(event.chat_id, f'您的账号{text}收支情况', file=BEAN_IMG)
     
 

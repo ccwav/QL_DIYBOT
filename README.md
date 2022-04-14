@@ -66,7 +66,7 @@
 	
 # 10.jbot\diy\CheckCK.py (青龙专用)
 
-	作用: 导出现有的CK信息
+	作用: 导出现有的CK信息,命令是/cck
 	安装: 1.CheckCK.py第20行的文件路径	 
 		  2.将修改后的CheckCK.py文件放于ql\jbot\diy(有些人需要放在ql\repo\dockerbot\jbot\diy)
 		  3.重启机器人即可生效

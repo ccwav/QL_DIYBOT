@@ -32,6 +32,7 @@
 	作用: 调用资产查询脚本查询对应CK的资产信息. 支持/ccbean 和 /ccbean CK序号 两种格式.
 	安装: 1.修改Bean_ccwav.py第69行的bot_jd_bean_change.js路径，这个文件我放在Script里面了
 		  2.文件放于ql\jbot\diy(有些人需要放在ql\repo\dockerbot\jbot\diy),重启机器人即可生效.
+		  3.增加bot_jd_bean_change_QL.js，显示青龙备注名字,青龙专用
 		  
 	特殊变量: BEANCHANGE_BOTDISABLELIST 可以关闭某些查询的项目提高速度,按需删减
 	export BEANCHANGE_BOTDISABLELIST="过期京豆&查优惠券&汪汪乐园&京东赚赚&京东秒杀&东东农场&极速金币&京喜牧场&京喜工厂&京东工厂&领现金&喜豆查询&金融养猪&东东萌宠"
@@ -41,7 +42,8 @@
 	Bean_ccwav.py的全局版本，tg任何群使用cb CK序号或cb ptpin两种格式查询资产.
 	安装: 1.ccbean_Global.py第41行的bot_jd_bean_change.js路径，这个文件我放在QLScript2仓库了
 		  2.文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
-
+		  3.增加bot_jd_bean_change_QL.js，显示青龙备注名字,青龙专用
+		  
 # 6.jbot\user\bean_Global.py (全局版本)
 	
 	Bean.py的全局版本，bb CK序号查询资产.

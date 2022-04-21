@@ -49,7 +49,7 @@ async def CCBeanDetailInfo(event):
         for line in txt:                
             if "京豆" in line and "🔔" not in line:
                 strReturn=strReturn+line+'\n'
-            if intcount==35:
+            if intcount==100:
                 intcount=0
                 if strReturn:                    
                     await user.send_message(event.chat_id, strReturn)

@@ -44,17 +44,18 @@
 		  2.文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
 		  3.增加bot_jd_bean_change_QL.js，显示青龙备注名字,青龙专用
 		  
+	特殊变量: BEANCHANGE_BOTDISABLELIST 可以关闭某些查询的项目提高速度,按需删减
+	export BEANCHANGE_BOTDISABLELIST="过期京豆&查优惠券&汪汪乐园&京东赚赚&京东秒杀&东东农场&极速金币&京喜牧场&京喜工厂&京东工厂&领现金&喜豆查询&金融养猪&东东萌宠"	 
+	
 # 6.jbot\user\bean_Global.py (全局版本)
 	
 	Bean.py的全局版本，bb CK序号查询资产.
-	安装: 1.覆盖jbot\bot\beandata.py
-		  3.文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
+	安装: 文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
 
 # 7.jbot\user\chart_Global.py (全局版本)
 	
 	chart.py的全局版本，bc CK序号查询资产.
-	安装: 1.覆盖jbot\bot\beandata.py
-		  3.文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
+	安装: 文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
 		  
 # 8.jbot\bot\bean.py
 
@@ -72,4 +73,17 @@
 	安装: 1.CheckCK.py第20行的文件路径	 
 		  2.将修改后的CheckCK.py文件放于ql\jbot\diy(有些人需要放在ql\repo\dockerbot\jbot\diy)
 		  3.重启机器人即可生效
-
+		  
+# 11.jbot\user\beaninfo_Global.py (全局版本)	
+	bd CK序号查询当日资产详情，
+	安装: 1.修改beaninfo_Global.py第40行的bot_jd_bean_info.js路径，这个文件我放在QLScript2仓库了
+		  2.文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
+		  3.增加bot_jd_bean_info_QL.js，显示青龙备注名字,青龙专用
+		  
+	特殊变量: export BOTShowTopNum="10" 限制显示的查询内容，隐藏X京豆以下信息
+	
+# 12.一些原版的bug修复:
+	jbot\utils.py: 修复user文件夹脚本载入时login.py没有优先载入导致部分全局命令不生效的问题.
+	jbot\user\reply_msg.py: 修复re命令重复发两次的问题
+			
+		

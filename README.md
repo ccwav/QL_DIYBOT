@@ -35,7 +35,7 @@
 		  3.增加bot_jd_bean_change_QL.js，显示青龙备注名字,青龙专用
 		  
 	特殊变量: BEANCHANGE_BOTDISABLELIST 可以关闭某些查询的项目提高速度,按需删减
-	export BEANCHANGE_BOTDISABLELIST="过期京豆&查优惠券&汪汪乐园&京东赚赚&京东秒杀&东东农场&极速金币&京喜牧场&京喜工厂&京东工厂&领现金&喜豆查询&金融养猪&东东萌宠"
+	export BEANCHANGE_BOTDISABLELIST="过期京豆&汪汪赛跑&查优惠券&汪汪乐园&京东赚赚&京东秒杀&东东农场&极速金币&京喜牧场&京喜工厂&京东工厂&领现金&喜豆查询&金融养猪&东东萌宠"
 
 # 5.jbot\user\ccbean_Global.py (全局版本)
 	

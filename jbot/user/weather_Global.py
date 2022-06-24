@@ -18,7 +18,7 @@ async def weatherInfo(event):
         await user.send_message(event.chat_id,"获取天气信息错误:"+e)
         return
         
-    if weather_data:
+    if weather_data and (weather_data['city']==message or (weather_data['city']!="北京")):
         await user.send_message(event.chat_id,'当前城市：'+weather_data['city']+'\n更新时间：'+weather_data['update_time']+'\n建议：'+weather_data['air_tips']+'\n温度：'+weather_data['tem']+'℃\n风速：'+weather_data['win_speed']+'\n风力：'+weather_data['win_meter']+'\n风向：'+weather_data['win']+'\n天气：'+weather_data['wea'])
     else:
         await user.send_message(event.chat_id,'获取天气信息错误,可能输入的城市有误或不被支持!')    

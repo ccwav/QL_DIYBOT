@@ -81,9 +81,17 @@
 		  3.增加bot_jd_bean_info_QL.js，显示青龙备注名字,青龙专用
 		  
 	特殊变量: export BOTShowTopNum="10" 限制显示的查询内容，隐藏X京豆以下信息
-	
+
+
 # 12.一些原版的bug修复:
 	jbot\utils.py: 修复user文件夹脚本载入时login.py没有优先载入导致部分全局命令不生效的问题.
 	jbot\user\reply_msg.py: 修复re命令重复发两次的问题
-			
-		
+	
+# 13.jbot\user\jxjd_Global.py (全局版本)	
+	解析京东 京喜 京东极速版口令为网址,用法是jx 口令 或者 选中他人口令回复jx
+	安装: 文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
+
+# 14.jbot\user\weather_Global.py (全局版本)	
+	查询天气，例如 深圳天气
+	安装: 文件放于ql\jbot\user(有些人需要放在ql\repo\dockerbot\jbot\user),重启机器人即可生效.
+				

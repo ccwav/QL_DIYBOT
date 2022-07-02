@@ -35,7 +35,7 @@ async def jcmd(event):
         await user.send_message(event.chat_id,'请指定要解析的口令,格式: jx 口令 或对口令直接回复jx ')
         return    
         
-    data = requests.post("http://158.101.153.139:19840/jCommand",
+    data = requests.post("http://ailoveu.eu.org:19840/jCommand",
                              headers=headers,
                              json={"code": strText}).json()
     code = data.get("code")

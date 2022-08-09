@@ -1,6 +1,6 @@
 from telethon import events, Button
 from .. import jdbot, chat_id, LOG_DIR, logger, BOT_SET, ch_name
-from ..bot.quickchart import QuickChart
+from ..bot.quickchart import QuickChart, QuickChartFunction
 from ..bot.beandata import get_bean_data
 from ..bot.utils import V4,split_list, press_event
 from uuid import uuid4
@@ -28,114 +28,99 @@ async def my_chartinfo(event):
             await event.delete()
             await user.send_message(event.chat_id,f'something wrong,I\'m sorry\n{str(res["data"])}')
         else:
-            creat_chart(res['data'][3], f'账号{str(text)}',res['data'][0], res['data'][1], res['data'][2][1:])
+            aver = (res["data"][0][0]+res["data"][0][1]+res["data"][0][2]+res["data"][0][3]+res["data"][0][4]+res["data"][0][5]+res["data"][0][6])//7
+            nickname=res['data'][4]
+            createChart(res['data'][0],res['data'][1],f'       {nickname} · 近七天平均收入{aver}豆⚡',res['data'][3],text)
             await event.delete()
-            await user.send_message(event.chat_id, f'您的账号{text}收支情况', file=BEAN_IMG)
+            await user.send_message(event.chat_id,file=BEAN_IMG)
     
 
-
-def creat_chart(xdata, title, bardata, bardata2, linedate):
+def createChart(income,out,Title,label,text):
     qc = QuickChart()
-    qc.background_color = '#fff'
-    qc.width = "1000"
-    qc.height = "600"
+    qc.width=1000
+    qc.height=500
+    qc.background_color="#22252a"
     qc.config = {
-        "type": "bar",
-        "data": {
-            "labels": xdata,
-            "datasets": [
-                {
-                    "label": "IN",
-                    "backgroundColor": [
-                        "rgb(255, 99, 132)",
-                        "rgb(255, 159, 64)",
-                        "rgb(255, 205, 86)",
-                        "rgb(75, 192, 192)",
-                        "rgb(54, 162, 235)",
-                        "rgb(153, 102, 255)",
-                        "rgb(255, 99, 132)"
-                    ],
-                    "yAxisID": "y1",
-                    "data": bardata
-                },
-                {
-                    "label": "OUT",
-                    "backgroundColor": [
-                        "rgb(255, 99, 132)",
-                        "rgb(255, 159, 64)",
-                        "rgb(255, 205, 86)",
-                        "rgb(75, 192, 192)",
-                        "rgb(54, 162, 235)",
-                        "rgb(153, 102, 255)",
-                        "rgb(255, 99, 132)"
-                    ],
-                    "yAxisID": "y1",
-                    "data": bardata2
-                },
-                {
-                    "label": "TOTAL",
-                    "type": "line",
-                    "fill": False,
-                    "backgroundColor": "rgb(201, 203, 207)",
-                    "yAxisID": "y2",
-                    "data": linedate
-                }
-            ]
-        },
-        "options": {
-            "plugins": {
-                "datalabels": {
-                    "anchor": 'end',
-                    "align": -100,
-                    "color": '#666',
-                    "font": {
-                        "size": 20,
-                    }
-                },
-            },
-            "legend": {
-                "labels": {
-                    "fontSize": 20,
-                    "fontStyle": 'bold',
-                }
-            },
-            "title": {
-                "display": True,
-                "text": f'{title}   收支情况',
-                "fontSize": 24,
-            },
-            "scales": {
-                "xAxes": [{
-                    "ticks": {
-                        "fontSize": 24,
-                    }
-                }],
-                "yAxes": [
-                    {
-                        "id": "y1",
-                        "type": "linear",
-                        "display": False,
-                        "position": "left",
-                        "ticks": {
-                            "max": int(int(max([max(bardata), max(bardata2)])+100)*2)
-                        },
-                        "scaleLabel": {
-                            "fontSize": 20,
-                            "fontStyle": 'bold',
-                        }
-                    },
-                    {
-                        "id": "y2",
-                        "type": "linear",
-                        "display": False,
-                        "ticks": {
-                            "min": int(min(linedate)*2-(max(linedate))-100),
-                            "max": int(int(max(linedate)))
-                        },
-                        "position": "right"
-                    }
-                ]
-            }
+     "data": {
+      "datasets": [{
+        "backgroundColor": QuickChartFunction('getGradientFillHelper(\'vertical\', ["#faab2c", "#f48847", "#ef5d68"])'),
+        "data": income,
+        "label": "收入",
+        "type": "bar"
+       },
+       {
+        "backgroundColor": QuickChartFunction('getGradientFillHelper(\'vertical\', ["#777777", "#747474"])'),
+        "data": out,
+        "label": "支出",
+        "type": "bar"
+       }
+      ],
+      "labels": label
+     },
+     "options": {
+      "plugins": {
+       "datalabels": {
+        "display": True,
+        "color": "#eee",
+        "align": "top",
+        "offset": -4,
+        "anchor": "end",
+        "font": {
+         "family": "Helvetica Neue",
+         "size": 16
         }
+       }
+      },
+      "legend": {
+       "position": "bottom",
+       "align": "end",
+       "display": True
+      },
+      "layout": {
+       "padding": {
+        "left": 10,
+        "right": 20,
+        "top": 30,
+        "bottom": 15
+       }
+      },
+      "responsive": True,
+      "title": {
+       "display": True,
+       "position": "bottom",
+       "text": Title,
+       "fontSize": 20,
+       "fontColor": "#aaa"
+      },
+      "tooltips": {
+       "intersect": True,
+       "mode": "index"
+      },
+      "scales": {
+       "xAxes": [{
+        "gridLines": {
+         "display": True,
+         "color": ""
+        },
+        "ticks": {
+         "display": True,
+         "fontSize": 16,
+         "fontColor": "#999"
+        }
+       }],
+       "yAxes": [{
+        "gridLines": {
+         "display": True,
+         "color": ""
+        },
+        "ticks": {
+         "display": True,
+         "fontSize": 14,
+         "fontColor": "#999"
+        }
+       }]
+      }
+     },
+     "type": "bar"
     }
     qc.to_file(BEAN_IMG)

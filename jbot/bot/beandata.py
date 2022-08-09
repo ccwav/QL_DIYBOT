@@ -101,7 +101,7 @@ def get_total_beans(ck):
         jurl = "https://wxapp.m.jd.com/kwxhome/myJd/home.json"
         resp = session.get(jurl, headers=headers, timeout=100).text
         res = json.loads(resp)
-        return res['user']['jingBean']
+        return res['user']['jingBean'],res['user']['petName'],res['user']['imgUrl']
     except Exception as e:
         logger.error(str(e))
 
@@ -115,7 +115,7 @@ def get_bean_data(i):
         if cookies:
             ck = cookies[i-1]
             beans_res = get_beans_7days(ck)
-            beantotal = get_total_beans(ck)
+            beantotal,nickname,pic = get_total_beans(ck)
             if beans_res['code'] != 200:
                 return beans_res
             else:
@@ -127,6 +127,6 @@ def get_bean_data(i):
                     beans_in.append(int(beans_res['data'][0][i]))
                     beans_out.append(int(str(beans_res['data'][1][i]).replace('-', '')))
                     beanstotal.append(beantotal)
-            return {'code': 200, 'data': [beans_in[::-1], beans_out[::-1], beanstotal[::-1], beans_res['data'][2][::-1]]}
+            return {'code': 200, 'data': [beans_in[::-1], beans_out[::-1], beanstotal[::-1], beans_res['data'][2][::-1],nickname,pic]}
     except Exception as e:
         logger.error(str(e))

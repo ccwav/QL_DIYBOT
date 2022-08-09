@@ -32,7 +32,7 @@ async def my_chartinfo(event):
             nickname=res['data'][4]
             createChart(res['data'][0],res['data'][1],f'       {nickname} · 近七天平均收入{aver}豆⚡',res['data'][3],text)
             await event.delete()
-            await user.send_message(event.chat_id,file=BEAN_IMG)
+            await user.send_message(event.chat_id,f'您的账号{text}收支情况',file=BEAN_IMG)
     
 
 def createChart(income,out,Title,label,text):

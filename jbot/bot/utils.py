@@ -8,6 +8,7 @@ import json
 from .. import jdbot, chat_id, LOG_DIR, logger, JD_DIR, OWN_DIR, CONFIG_DIR, BOT_SET
 import asyncio
 import datetime
+import random
 row = int(BOT_SET['每页列数'])
 CRON_FILE = f'{CONFIG_DIR}/crontab.list'
 BEAN_LOG_DIR = f'{LOG_DIR}/jd_bean_change/'
@@ -125,12 +126,12 @@ async def cmd(cmdtext):
             return
         if len(res) == 0:
             await jdbot.edit_message(msg, '已执行，但返回值为空')
-        elif len(res) <= 4000:        
+        elif len(res) <= 4000:
             await jdbot.delete_messages(chat_id, msg)
             res=msgformat(res)
             await jdbot.send_message(chat_id, res)
         elif len(res) > 4000:
-            tmp_log = f'{LOG_DIR}/bot/{cmdtext.split("/")[-1].split(".js")[0]}-{datetime.datetime.now().strftime("%H-%M-%S")}.log'
+            tmp_log = f'{LOG_DIR}/bot/{cmdtext.split("/")[-1].split(".js")[0]}-{datetime.datetime.now().strftime("%H-%M-%S")}_{random.randint(1,99)}.log'
             with open(tmp_log, 'w+', encoding='utf-8') as f:
                 f.write(res)
             await jdbot.delete_messages(chat_id, msg)

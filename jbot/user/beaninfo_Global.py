@@ -87,7 +87,10 @@ async def CCBeanDetailInfo(event):
     strReturn="" 
     await event.delete()
     if res:
-        for line in txt:                
+        for line in txt:  
+            if "近期豆子" in line:
+                strReturn=strReturn+'\n'
+                
             if "【" in line and "🔔" not in line:
                 strReturn=strReturn+line+'\n'
             if intcount==100:

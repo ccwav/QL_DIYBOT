@@ -40,15 +40,13 @@ def gen_params(page):
     }
     return params
 
-
 def get_beans_7days(ck):
     try:
         day_7 = True
         page = 0
-        headers = {
-            "Host": "api.m.jd.com",
+        headers = {            
             "Content-Type": "application/x-www-form-urlencoded;",           
-            "User-Agent": "jdapp;android;10.1.6;9;network/wifi;Mozilla/5.0 (Linux; Android 9; MI 6 Build/PKQ1.190118.001; wv)",
+            "User-Agent": "Mozilla/5.0 (Linux; Android 12; SM-G9880) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Mobile Safari/537.36 EdgA/106.0.1370.47",
             "Cookie": ck
         }
         days = []
@@ -59,13 +57,13 @@ def get_beans_7days(ck):
         beans_out = {key: 0 for key in days}
         
         while day_7:
-            page = page + 1
-            url="https://api.m.jd.com/client.action?functionId=getJingBeanBalanceDetail&body=%7B%22pageSize%22%3A%2220%22%2C%22page%22%3A%22"+str(page)+"%22%7D&appid=ld"
-            resp = session.get(url,headers=headers, timeout=100).text
+            page = page + 1            
+            url="https://bean.m.jd.com/beanDetail/detail.json?page="+str(page)
+            resp = session.get(url,headers=headers, timeout=100).text           
             amount=0
             res = json.loads(resp)
             if res['code'] == "0":
-                for i in res['detailList']:
+                for i in res['jingDetailList']:
                     amount=int(i['amount'])
                     for date in days:                        
                         if str(date) in i['date'] and amount > 0:

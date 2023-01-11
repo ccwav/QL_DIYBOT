@@ -106,7 +106,15 @@ def backup_file(file):
             os.remove(f'{file}.bak')
             os.rename(file, f'{file}.bak')
 
-
+def Remove_file(file):
+    '''如果文件存在，则删除，并更新'''
+    if os.path.exists(file):
+        try:
+            os.remove(file)
+        except WindowsError:
+            os.remove(f'{file}.bak')
+            os.rename(file, f'{file}.bak')
+            
 def press_event(user_id):
     return events.CallbackQuery(func=lambda e: e.sender_id == user_id)
 

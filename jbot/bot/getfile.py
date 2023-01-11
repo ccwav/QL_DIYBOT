@@ -1,7 +1,7 @@
 from telethon import events, Button
 from asyncio import exceptions
 from .. import jdbot, chat_id, SCRIPTS_DIR, CONFIG_DIR, logger
-from .utils import press_event, backup_file, add_cron, cmd, DIY_DIR, TASK_CMD, split_list
+from .utils import press_event, backup_file, Remove_file, add_cron, cmd, DIY_DIR, TASK_CMD, split_list
 import json
 
 @jdbot.on(events.NewMessage(from_users=chat_id))
@@ -58,6 +58,9 @@ async def bot_get_file(event):
                     
                     if isbackup=="1":
                         backup_file(f'{res}/{filename}')
+                    else:
+                        Remove_file(f'{res}/{filename}')
+                        
                     if isrun=="1":    
                         cmdtext = f'{TASK_CMD} {res}/{filename} now'
                     await jdbot.download_media(event.message, res)

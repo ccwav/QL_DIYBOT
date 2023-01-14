@@ -35,7 +35,9 @@ async def bot_get_file(event):
                 convdata = await conv.wait_event(press_event(SENDER))
                 
                 res = bytes.decode(convdata.data)
-                isbackup="1"                
+                isbackup="1"
+                noaskaddcron="0"
+                
                 for fileSetting in getfileSettinglist: 
                     if fileSetting["按钮名字"]=="配置档":
                         continue
@@ -46,6 +48,8 @@ async def bot_get_file(event):
                                 if runcmd!="" :     
                                     runcmd=runcmd+"\n"
                                 runcmd=runcmd+fileSetting[key].replace("文件名",filename)
+                            if "不问是否定时" in key:  
+                                noaskaddcron=fileSetting[key]
                             
                 isrun="0"
                 if "task " in res:
@@ -58,9 +62,11 @@ async def bot_get_file(event):
                     msg = await jdbot.edit_message(msg, '对话已取消')
                     conv.cancel()
                 else:
-                    msg = await jdbot.edit_message(msg, '是否尝试自动加入定时', buttons=markup)
-                    convdata2 = await conv.wait_event(press_event(SENDER))
-                    res2 = bytes.decode(convdata2.data)
+                    res2=""
+                    if noaskaddcron=="0":
+                        msg = await jdbot.edit_message(msg, '是否尝试自动加入定时', buttons=markup)
+                        convdata2 = await conv.wait_event(press_event(SENDER))
+                        res2 = bytes.decode(convdata2.data)
                     
                     if isbackup=="1":
                         backup_file(f'{res}/{filename}')
@@ -72,6 +78,7 @@ async def bot_get_file(event):
                     await jdbot.download_media(event.message, res)
                     with open(f'{res}/{filename}', 'r', encoding='utf-8') as f:
                         resp = f.read()
+                        
                     if res2 == 'yes':
                         await add_cron(jdbot, conv, resp, filename, msg, SENDER, markup, res)
                     else:

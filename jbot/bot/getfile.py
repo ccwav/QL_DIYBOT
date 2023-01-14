@@ -26,6 +26,7 @@ async def bot_get_file(event):
             markup = []
             filename = event.message.file.name
             cmdtext = None
+            runcmd = ""
             async with jdbot.conversation(SENDER, timeout=180) as conv:
                 msg = await conv.send_message('请选择您要放入的文件夹或操作：\n')
                 markup = btn
@@ -39,8 +40,13 @@ async def bot_get_file(event):
                     if fileSetting["按钮名字"]=="配置档":
                         continue
                     if fileSetting["存放路径"]==res:
-                        isbackup=fileSetting["备份原脚本"]
-                        
+                        isbackup=fileSetting["备份原脚本"]                        
+                        for key in fileSetting:
+                            if "执行命令" in key:
+                                if runcmd!="" :     
+                                    runcmd=runcmd+"\n"
+                                runcmd=runcmd+fileSetting[key].replace("文件名",filename)
+                            
                 isrun="0"
                 if "task " in res:
                     isrun="1"
@@ -70,9 +76,21 @@ async def bot_get_file(event):
                         await add_cron(jdbot, conv, resp, filename, msg, SENDER, markup, res)
                     else:
                         await jdbot.edit_message(msg, f'{filename}已保存到{res}文件夹')
-                    conv.cancel()    
+                    conv.cancel()
             if cmdtext:
-                await cmd(cmdtext)
+                if runcmd!="":     
+                    runcmd=cmdtext+"\n"+runcmd
+                else:
+                    runcmd=cmdtext
+                
+            if runcmd!="":                 
+                msg=await jdbot.send_message(chat_id,"开始执行命令列表"+":\n"+runcmd)
+                cmdlist=runcmd.split("\n")
+                for RunCommound in cmdlist: 
+                    await cmd(RunCommound)
+                    
+                await jdbot.edit_message(msg, '任务执行完毕，祝君愉快.')    
+                    
     except exceptions.TimeoutError:
         msg = await jdbot.send_message(chat_id, '选择已超时，对话已停止')
     except Exception as e:

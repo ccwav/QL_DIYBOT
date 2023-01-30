@@ -17,8 +17,8 @@ async def bot_get_file(event):
             if fileSetting["按钮名字"]=="配置档":
                 countbtn=int(fileSetting["每行按钮数"])
             else:
-                btn.append(Button.inline(fileSetting["按钮名字"], data=fileSetting["存放路径"]))          
-        btn.append(Button.inline('取消', data='cancel'))
+                btn.append(Button.inline(fileSetting["按钮名字"], data=fileSetting["按钮名字"]+"|"+fileSetting["存放路径"]))          
+        btn.append(Button.inline('取消', data='取消|cancel'))
         btn = split_list(btn, countbtn)   
         
         SENDER = event.sender_id
@@ -41,7 +41,7 @@ async def bot_get_file(event):
                 for fileSetting in getfileSettinglist: 
                     if fileSetting["按钮名字"]=="配置档":
                         continue
-                    if fileSetting["存放路径"]==res:
+                    if fileSetting["按钮名字"]==res.split("|")[0]:
                         isbackup=fileSetting["备份原脚本"]                        
                         for key in fileSetting:
                             if "执行命令" in key:
@@ -50,8 +50,8 @@ async def bot_get_file(event):
                                 runcmd=runcmd+fileSetting[key].replace("文件名",filename)
                             if "不问是否定时" in key:  
                                 noaskaddcron=fileSetting[key]
-                            
                 isrun="0"
+                res=res.split("|")[1]
                 if "task " in res:
                     isrun="1"
                     res=res.replace("task ","")

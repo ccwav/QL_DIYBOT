@@ -4,6 +4,7 @@ from asyncio import exceptions
 from .. import jdbot, chat_id, logger, SCRIPTS_DIR, CONFIG_DIR, logger, BOT_SET, ch_name
 from .utils import press_event, backup_file, Remove_file, add_cron, cmd, DIY_DIR, TASK_CMD, split_list
 import json
+import os
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/dl'))
 async def bot_url_file(event):
@@ -28,9 +29,35 @@ async def bot_url_file(event):
         resp = requests.get(url).text
         
         btn = []
-        f = open("/ql/config/getfileSetting.json", "r+", encoding='utf-8')
-        getfileSettinglist = json.loads(f.read())
-        f.close()
+        
+        issetconfig=False
+        
+        if os.path.exists("/ql/data/config/auth.json"):
+            configpath="/ql/data/"
+            
+        if os.path.exists("/ql/config/auth.json"):
+            configpath="/ql/"
+            
+        if os.path.exists("/jd/config/config.sh"):
+            configpath="/jd/"
+            
+        try:
+            f = open(configpath+"config/ccbotSetting.json", "r+", encoding='utf-8')
+            ccbotSetting = json.loads(f.read())
+            f.close()
+            for key in ccbotSetting:
+                if key=="文件存放配置":
+                    issetconfig=True
+        except Exception as e:
+            await jdbot.send_message(chat_id,f'载入ccbotSetting.json出错,请检查内容!\n'+str(e))
+            return
+            
+        if not issetconfig:
+            await jdbot.send_message(chat_id, f'载入ccbotSetting.json成功，但是缺少相应的配置,请检查!')
+            return
+        
+        getfileSettinglist=ccbotSetting["文件存放配置"]
+        
         countbtn=3
         for fileSetting in getfileSettinglist: 
             if fileSetting["按钮名字"]=="配置档":

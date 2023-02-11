@@ -6,7 +6,8 @@ from ..bot.utils import cmd, TASK_CMD,split_list, press_event
 from ..diy.utils import read, write
 import asyncio
 import re
-
+import os
+import json
 @user.on(events.NewMessage(pattern=r'^setbd', outgoing=True))
 async def SetBeanDetailInfo(event):
     try:
@@ -56,51 +57,109 @@ async def CCBeanDetailInfo(event):
         text = None  
     
     if text==None:
-        await event.edit('请指定要查询的账号,格式: cb 1 或 cb ptpin')
-        return    
+        await event.edit('请指定要查询的账号,格式: bd 1 或 bd ptpin')
+        return 
+        
+    
+    #载入设定
+    scriptpath=""
+    waitsec=0
+    issetconfig=False
+    showtopnum=0
+    if os.path.exists("/ql/data/config/auth.json"):
+        configpath="/ql/data/"
+        
+    if os.path.exists("/ql/config/auth.json"):
+        configpath="/ql/"
+        
+    if os.path.exists("/jd/config/config.sh"):
+        configpath="/jd/"
+        
+    try:
+        f = open(configpath+"config/ccbotSetting.json", "r+", encoding='utf-8')
+        ccbotSetting = json.loads(f.read())
+        f.close()
+        for key in ccbotSetting:
+            if key=="bd命令配置":
+                issetconfig=True
+    except Exception as e:
+        await event.edit(f'载入ccbotSetting.json出错,请检查内容!\n'+str(e))
+        return
+        
+    if not issetconfig:
+        await event.edit(f'载入ccbotSetting.json成功，但是缺少相应的配置,请检查!')
+        return
+        
+    try:
+        for key in ccbotSetting["bd命令配置"]:
+            if key=="脚本文件地址":
+                scriptpath=ccbotSetting["bd命令配置"][key]
+            if key=="多少秒后自动删除":
+                waitsec=int(ccbotSetting["bd命令配置"][key])
+            if key=="近期京豆展示的条数":
+                showtopnum=int(ccbotSetting["bd命令配置"][key])    
+    except Exception as e:
+        await event.edit(f'载入ccbotSetting.json的bd命令配置内容出错,请检查!\n'+str(e))
+        return
+    
+    if scriptpath=="":
+        await event.edit(f'ccbotSetting.json中的bd命令配置没有填写脚本文件地址,请检查!')
+        return
+        
+    if not os.path.exists(scriptpath):
+        await event.edit(f'ccbotSetting.json中的bd命令配置的脚本文件不存在,请检查!\n'+scriptpath)
+        return
         
     key="BOTCHECKCODE"
-    kv=f'{key}="{text}"'
-    change=""
+    kv=f'{key}="{text}"'    
     configs = read("str")    
     intcount=0
     if kv not in configs:
         if key in configs:
-            configs = re.sub(f'{key}=("|\').*("|\')', kv, configs)
-            change += f"【替换】环境变量:`{kv}`\n"  
+            configs = re.sub(f'{key}=("|\').*("|\')', kv, configs)            
             write(configs)
         else:
             configs = read("str")
-            configs += f'export {key}="{text}"\n'
-            change += f"【新增】环境变量:`{kv}`\n"  
+            configs += f'\nexport {key}="{text}"\n'            
             write(configs)
+            
+    key="BOTShowJinQiNum参数"
+    kv=f'{key}="{showtopnum}"'    
+    configs = read("str")    
+    intcount=0
+    if kv not in configs:
+        if key in configs:
+            configs = re.sub(f'{key}=("|\').*("|\')', kv, configs)            
+            write(configs)
+        else:
+            configs = read("str")
+            configs += f'\nexport {key}="{showtopnum}"\n'            
+            write(configs)        
                 
 
     await event.edit('开始查询账号'+text+'的资产，请稍后...')
         
-    cmdtext="task /ql/repo/ccwav_QLScript2/bot_jd_bean_info_QL.js now"        
+    cmdtext="task "+scriptpath+" now"        
     p = await asyncio.create_subprocess_shell(
         cmdtext, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
     res_bytes, res_err = await p.communicate()
     res = res_bytes.decode('utf-8') 
     txt=res.split('\n')
-    strReturn="" 
-    await event.delete()
+    result=""     
     if res:
         for line in txt:  
             if "近期豆子" in line:
-                strReturn=strReturn+'\n'
-                
+                result=result+'\n'                
             if "【" in line and "🔔" not in line:
-                strReturn=strReturn+line+'\n'
-            if intcount==100:
-                intcount=0
-                if strReturn:                    
-                    await user.send_message(event.chat_id, strReturn)
-                    strReturn="" 
+                result=result+line+'\n'            
     else:
-        await user.send_message(event.chat_id,'查询失败!')
+        result='查询失败!\n'
         
-    if strReturn:        
-        await user.send_message(event.chat_id, strReturn)
+    if waitsec==0:
+        await event.edit(result)
+    else:
+        result=result+"\n【本条信息将在"+str(waitsec)+"秒钟后自动删除】"
+        await event.edit(result)        
+        await asyncio.sleep(waitsec)
+        await event.delete()
     

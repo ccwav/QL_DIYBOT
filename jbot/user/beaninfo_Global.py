@@ -123,7 +123,7 @@ async def CCBeanDetailInfo(event):
             configs += f'\nexport {key}="{text}"\n'            
             write(configs)
             
-    key="BOTShowJinQiNum参数"
+    key="BOTShowJinQiNum"
     kv=f'{key}="{showtopnum}"'    
     configs = read("str")    
     intcount=0

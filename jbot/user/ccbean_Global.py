@@ -1,14 +1,14 @@
-from telethon import events, Button
-from .login import user
-
-from .. import jdbot
-from ..bot.utils import cmd, TASK_CMD,split_list, press_event
+from telethon import events
 from ..diy.utils import read, write
 import asyncio
 import re
 import os
 import json
-
+try:
+    from .login import user
+except:
+    from .. import user
+    
 @user.on(events.NewMessage(pattern=r'^cb', outgoing=True))
 async def CCBeanInfo(event):
     msg_text= event.raw_text.split(' ')

@@ -1,10 +1,13 @@
 from telethon import events
-from .login import user
 import requests
 import json
 import os
 import asyncio
-
+try:
+    from .login import user
+except:
+    from .. import user
+    
 @user.on(events.NewMessage(pattern=r'.*天气$', outgoing=True))
 async def weatherInfo(event):
 

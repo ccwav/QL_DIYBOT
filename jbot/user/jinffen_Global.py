@@ -8,14 +8,15 @@ import json
 import re
 import time
 from random import sample
-
 import httpx
 from telethon import events
-
 from .. import jdbot
-from ..bot.utils import get_cks, AUTH_FILE, QL, CONFIG_SH_FILE
-from .login import user
-
+from ..bot.utils import get_cks
+try:
+    from .login import user
+except:
+    from .. import user
+    
 @user.on(events.NewMessage(pattern=r'^jf', outgoing=True))
 async def getyj(event):
     try:
@@ -30,11 +31,6 @@ async def getyj(event):
             return    
         else:        
             await event.edit("开始查询")
-            
-        if QL:
-            ckfile = AUTH_FILE
-        else:
-            ckfile = CONFIG_SH_FILE
         
         #载入设定        
         waitsec=0
@@ -42,12 +38,19 @@ async def getyj(event):
         
         if os.path.exists("/ql/data/config/auth.json"):
             configpath="/ql/data/"
+            ckfile="/ql/data/config/auth.json"
             
         if os.path.exists("/ql/config/auth.json"):
             configpath="/ql/"
+            ckfile="/ql/config/auth.json"
             
         if os.path.exists("/jd/config/config.sh"):
             configpath="/jd/"
+            ckfile=""
+        
+        if ckfile=="":
+            await event.edit('不支持V4环境，退出...')
+            return
             
         try:
             f = open(configpath+"config/ccbotSetting.json", "r+", encoding='utf-8')

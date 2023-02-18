@@ -12,6 +12,8 @@ import httpx
 from telethon import events
 from .. import jdbot
 from ..bot.utils import get_cks
+from urllib.parse import unquote
+
 try:
     from .login import user
 except:
@@ -84,6 +86,9 @@ async def getyj(event):
         else:
             jfck = cookies[num - 1]
             pin = re.findall(r'(pt_pin=([^; ]+)(?=;?))',jfck)[0][1]
+            if re.search('%', pin):
+                pin = unquote(pin, 'utf-8')
+                
             start = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
             info = f'**【账号🆔{pin}】💹佣金收入：**\n'  
             info += f'【截止到{start}】\n' 

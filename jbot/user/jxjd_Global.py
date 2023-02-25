@@ -46,6 +46,6 @@ async def jcmd(event):
     if jumpUrl != "":        
         await user.send_message(event.chat_id,title+"\n"+jumpUrl)
     else:
-        await user.send_message(event.chat_id,"解析出错:"+data.get("data"))
+        await user.send_message(event.chat_id,"解析出错:\n"+res.text)
     
     

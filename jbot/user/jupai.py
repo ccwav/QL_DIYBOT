@@ -1,9 +1,13 @@
 from telethon import events
-from .login import user
 import requests
 import urllib.parse
 from uuid import uuid4
 from .. import LOG_DIR
+
+try:
+    from .login import user
+except:
+    from .. import user
 
 @user.on(events.NewMessage(pattern=r'^jp', outgoing=True))
 async def bot_bean(event):

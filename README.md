@@ -76,5 +76,9 @@
 # 15.jbot\bot\getfile.py 	
 	安装: 文件放于ql\jbot\bot(同时放在ql\repo\dockerbot\jbot\bot),修改配置文件的文件地址,重启机器人即可生效.
 	
+# 16.jbot\user\jupai.py
+	发送举牌小人图片，格式: jp 内容，或者对内容回复jp. 
+	安装: 文件放于ql\jbot\user,重启机器人即可生效.
+	
 				
 				

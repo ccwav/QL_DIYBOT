@@ -92,13 +92,24 @@ async def getyj(event):
             start = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
             info = f'**【账号🆔{pin}】💹佣金收入：**\n'  
             info += f'【截止到{start}】\n' 
-            jfdata, get_ztmy, get_7my, get_30my = await asyncio.gather(
+
+            yesterday = (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
+            sevendate = (datetime.datetime.now() + datetime.timedelta(days=-7)).strftime("%Y-%m-%d")
+            now = datetime.datetime.now()
+            last_month = now - datetime.timedelta(days=now.day)
+            first_day_of_this_month = datetime.datetime(now.year, now.month, 1)
+            last_day = datetime.datetime(last_month.year, last_month.month, 1)
+            last_day_of_last_month = first_day_of_this_month - datetime.timedelta(days=1)
+
+            jfdata, get_ztmy, get_7my, get_thismonth,get_lastmonth = await asyncio.gather(
                 get_fl(jfck),
-                get_fls(jfck, 1),
-                get_fls(jfck, 7),
-                get_fls(jfck, 30)
+                get_fls(jfck, yesterday,yesterday),
+                get_fls(jfck, sevendate,yesterday),
+                get_fls(jfck, first_day_of_this_month.strftime("%Y-%m-%d"),yesterday),
+                get_fls(jfck, last_day.strftime("%Y-%m-%d"),last_day_of_last_month.strftime("%Y-%m-%d"))
             )
-            if jfdata['code'] == 200 and get_ztmy['code'] == 200 and get_7my['code'] == 200 and get_30my['code'] == 200:
+
+            if jfdata['code'] == 200 and get_ztmy['code'] == 200 and get_7my['code'] == 200 and get_thismonth['code'] == 200 and get_lastmonth['code'] == 200:
                 yj = 0
                 count = 0
                 keys = ['待付款', '取消']
@@ -106,7 +117,7 @@ async def getyj(event):
                     if all(k not in str(i['validCodeMsg']) for k in keys) and float(i['estimateFee']) > 0:
                         yj += i['estimateFee']
                         count += 1                
-                info += f'    【今日订单】{count}\n    【今日佣金】{round(yj, 2)}\n    【昨日佣金】{get_ztmy["data"]}\n    【七日收入】{get_7my["data"]}\n    【30日收入】{get_30my["data"]}'
+                info += f'    【今日订单】{count}\n    【今日佣金】{round(yj, 2)}\n    【昨日佣金】{get_ztmy["data"]}\n    【七日收入】{get_7my["data"]}\n    【本月收入】{get_thismonth["data"]}\n    【上月收入】{get_lastmonth["data"]}'
             elif 'no login' in jfdata['data']:
                 info += '查询失败，账号已过期'
             elif 'no register' in jfdata['data']:
@@ -187,10 +198,8 @@ async def get_fl(cookie):
         return {'code': 400, 'data': e}
 
 
-async def get_fls(cookie, day):
-    try:
-        startdate = (datetime.datetime.now() + datetime.timedelta(days=-day)).strftime("%Y-%m-%d")
-        enddate = (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
+async def get_fls(cookie, startdate,enddate):
+    try:        
         body = {"funName": "querySpreadEffectData", "unionId": 2023952562, "param": {"startDate": startdate, "endDate": enddate}}
         url = f"https://api.m.jd.com/api?functionId=union_report&_={int(time.time() * 1000)}&appid=u&body={body}&loginType=2"
         headers = {
@@ -211,7 +220,6 @@ async def get_fls(cookie, day):
             return {'code': 400, 'data': str(res.json())}
     except Exception as e:
         return {'code': 400, 'data': e}
-
 
 async def userAgent():
     """

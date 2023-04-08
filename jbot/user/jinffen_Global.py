@@ -10,7 +10,7 @@ import time
 from random import sample
 import httpx
 from telethon import events
-from .. import jdbot
+from .. import jdbot,chat_id,logger
 from ..bot.utils import get_cks
 from urllib.parse import unquote
 
@@ -88,42 +88,41 @@ async def getyj(event):
             pin = re.findall(r'(pt_pin=([^; ]+)(?=;?))',jfck)[0][1]
             if re.search('%', pin):
                 pin = unquote(pin, 'utf-8')
-                
+            logger.error(jfck)
             start = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
             info = f'**【账号🆔{pin}】💹佣金收入：**\n'  
-            info += f'【截止到{start}】\n' 
+            #info += f'【截止到{start}】\n' 
 
             yesterday = (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
-            sevendate = (datetime.datetime.now() + datetime.timedelta(days=-7)).strftime("%Y-%m-%d")
-            now = datetime.datetime.now()
-            last_month = now - datetime.timedelta(days=now.day)
-            first_day_of_this_month = datetime.datetime(now.year, now.month, 1)
-            last_day = datetime.datetime(last_month.year, last_month.month, 1)
-            last_day_of_last_month = first_day_of_this_month - datetime.timedelta(days=1)
+            sevendate = (datetime.datetime.now() + datetime.timedelta(days=-7)).strftime("%Y-%m-%d")           
 
-            jfdata, get_ztmy, get_7my, get_thismonth,get_lastmonth = await asyncio.gather(
+            jfflinfo,jfflclickinfo,jfdata, get_ztmy, get_7my = await asyncio.gather(
+                get_flinfo(jfck),
+                get_flclickinfo(jfck),
                 get_fl(jfck),
                 get_fls(jfck, yesterday,yesterday),
-                get_fls(jfck, sevendate,yesterday),
-                get_fls(jfck, first_day_of_this_month.strftime("%Y-%m-%d"),yesterday),
-                get_fls(jfck, last_day.strftime("%Y-%m-%d"),last_day_of_last_month.strftime("%Y-%m-%d"))
+                get_fls(jfck, sevendate,yesterday)
             )
 
-            if jfdata['code'] == 200 and get_ztmy['code'] == 200 and get_7my['code'] == 200 and get_thismonth['code'] == 200 and get_lastmonth['code'] == 200:
+            if jfflinfo['code'] == 200 and jfflclickinfo['code'] == 200 and jfdata['code'] == 200 and get_ztmy['code'] == 200 and get_7my['code'] == 200 :
                 yj = 0
                 count = 0
                 keys = ['待付款', '取消']
                 for i in jfdata['data']:
                     if all(k not in str(i['validCodeMsg']) for k in keys) and float(i['estimateFee']) > 0:
                         yj += i['estimateFee']
-                        count += 1                
-                info += f'    【今日订单】{count}\n    【今日佣金】{round(yj, 2)}\n    【昨日佣金】{get_ztmy["data"]}\n    【七日收入】{get_7my["data"]}\n    【本月收入】{get_thismonth["data"]}\n    【上月收入】{get_lastmonth["data"]}'
+                        count += 1  
+                info += f'【今日京粉信息】\n'               
+                info += f'    【点击量】{jfflclickinfo["data"]["clickCount"]}\n    【引入UV】{jfflclickinfo["data"]["introduceUv"]}\n    【有效订单量】{jfflclickinfo["data"]["validOrderCount"]}\n'
+                info += f'    【有效订单金额】{jfflclickinfo["data"]["validOrderAmount"]}\n    【预估收入】{jfflclickinfo["data"]["predictCommission"]}\n'
+                info += f'\n【其他信息】\n'    
+                info += f'    【昨日佣金】{get_ztmy["data"]}\n    【七日收入】{get_7my["data"]}\n    【本月预估结算】{jfflinfo["data"]["lastMonthAmount"]}\n    【下月预估结算】{jfflinfo["data"]["thisMonthAmount"]}'
             elif 'no login' in jfdata['data']:
                 info += '查询失败，账号已过期'
             elif 'no register' in jfdata['data']:
                 info += '查询失败，返利未激活'
             else:
-                info += f'查询出错，错误详情\n{jfdata["data"], get_ztmy["data"], get_7my["data"], get_30my["data"]}'
+                info += f'查询出错，错误详情\n{jfdata["data"], get_ztmy["data"], get_7my["data"]}'
                 
         
         if waitsec==0:
@@ -215,6 +214,56 @@ async def get_fls(cookie, startdate,enddate):
             res = await session.get(url, headers=headers, timeout=10)
         if res.status_code == 200:
             response = res.json()["result"]["spreadReportInfoSum"]["cosFee"]
+            return {'code': 200, 'data': response}
+        else:
+            return {'code': 400, 'data': str(res.json())}
+    except Exception as e:
+        return {'code': 400, 'data': e}
+
+    
+async def get_flinfo(cookie):
+    try:        
+        body = {"funName": "queryYgCommTotal"}
+        url = f"https://api.m.jd.com/api?functionId=union_balance_pay&_={int(time.time() * 1000)}&appid=u&body={body}&loginType=2"
+        headers = {
+            'Host': 'api.m.jd.com',
+            'Connection': 'keep-alive',
+            'Cookie': cookie,
+            'content-type': 'application/json',
+            'Accept-Encoding': 'gzip,compress,br,deflate',
+            'User-Agent': await userAgent(),
+            'Referer': 'https://servicewechat.com/wxf463e50cd384beda/138/page-frame.html'
+        }
+        async with httpx.AsyncClient(verify=False) as session:
+            res = await session.get(url, headers=headers, timeout=10)
+        
+        if res.status_code == 200:
+            response = res.json()["result"]
+            return {'code': 200, 'data': response}
+        else:
+            return {'code': 400, 'data': str(res.json())}
+    except Exception as e:
+        return {'code': 400, 'data': e}
+
+async def get_flclickinfo(cookie):
+    try:        
+        dtnow = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        body = {"funName":"getIndexStatisticsInfoList","param":{"startTime":dtnow,"endTime":dtnow}}
+        url = f"https://api.m.jd.com/api?functionId=union_data_bi_shop&_={int(time.time() * 1000)}&appid=u_jfapp&body={body}&loginType=2"
+        headers = {
+            'Host': 'api.m.jd.com',
+            'Connection': 'keep-alive',
+            'Cookie': cookie,
+            'content-type': 'application/json',
+            'Accept-Encoding': 'gzip,compress,br,deflate',
+            'User-Agent': await userAgent(),
+            'Referer': 'https://jingfenapp.jd.com/'
+        }
+        async with httpx.AsyncClient(verify=False) as session:
+            res = await session.get(url, headers=headers, timeout=10)
+        
+        if res.status_code == 200:
+            response = res.json()["result"]
             return {'code': 200, 'data': response}
         else:
             return {'code': 400, 'data': str(res.json())}

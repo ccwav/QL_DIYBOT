@@ -78,11 +78,10 @@ async def getyj(event):
             return
                 
         num = int(text)
-        info = f'**【账号🆔{num}】💹佣金收入：**\n'
-        
+
         cookies = get_cks(ckfile)
         if num > len(cookies):
-            info += f'查询失败，您共有{len(cookies)}个账号'
+            info = f'查询失败，您共有{len(cookies)}个账号'
         else:
             jfck = cookies[num - 1]
             pin = re.findall(r'(pt_pin=([^; ]+)(?=;?))',jfck)[0][1]
@@ -90,39 +89,50 @@ async def getyj(event):
                 pin = unquote(pin, 'utf-8')
             logger.error(jfck)
             start = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-            info = f'**【账号🆔{pin}】💹佣金收入：**\n'  
-            #info += f'【截止到{start}】\n' 
+            #info = f'以下是{pin}的京粉信息:\n'
+            
 
             yesterday = (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
-            sevendate = (datetime.datetime.now() + datetime.timedelta(days=-7)).strftime("%Y-%m-%d")           
+            sevendate = (datetime.datetime.now() + datetime.timedelta(days=-7)).strftime("%Y-%m-%d")
+            now = datetime.datetime.now()
+            last_month = now - datetime.timedelta(days=now.day)
+            first_day_of_this_month = datetime.datetime(now.year, now.month, 1)
+            last_day = datetime.datetime(last_month.year, last_month.month, 1)
+            last_day_of_last_month = first_day_of_this_month - datetime.timedelta(days=1)           
 
-            jfflinfo,jfflclickinfo,jfdata, get_ztmy, get_7my = await asyncio.gather(
+            jfflinfo,jfflclickinfo,jfdata, get_ztmy, get_7my, get_thismonth,get_lastmonth = await asyncio.gather(
                 get_flinfo(jfck),
                 get_flclickinfo(jfck),
                 get_fl(jfck),
                 get_fls(jfck, yesterday,yesterday),
-                get_fls(jfck, sevendate,yesterday)
+                get_fls(jfck, sevendate,yesterday),
+                get_fls(jfck, first_day_of_this_month.strftime("%Y-%m-%d"),yesterday),
+                get_fls(jfck, last_day.strftime("%Y-%m-%d"),last_day_of_last_month.strftime("%Y-%m-%d"))
             )
 
-            if jfflinfo['code'] == 200 and jfflclickinfo['code'] == 200 and jfdata['code'] == 200 and get_ztmy['code'] == 200 and get_7my['code'] == 200 :
+            if jfflinfo['code'] == 200 and jfflclickinfo['code'] == 200 and jfdata['code'] == 200 and get_ztmy['code'] == 200 and get_7my['code'] == 200  and get_thismonth['code'] == 200 and get_lastmonth['code'] == 200:
                 yj = 0
                 count = 0
                 keys = ['待付款', '取消']
                 for i in jfdata['data']:
                     if all(k not in str(i['validCodeMsg']) for k in keys) and float(i['estimateFee']) > 0:
                         yj += i['estimateFee']
-                        count += 1  
-                info += f'【今日京粉信息】\n'               
+                        count += 1                
+                info = f'【{pin}今日京粉信息】\n'
+                info += f'    【截止到{start}】\n' 
                 info += f'    【点击量】{jfflclickinfo["data"]["clickCount"]}\n    【引入UV】{jfflclickinfo["data"]["introduceUv"]}\n    【有效订单量】{jfflclickinfo["data"]["validOrderCount"]}\n'
                 info += f'    【有效订单金额】{jfflclickinfo["data"]["validOrderAmount"]}\n    【预估收入】{jfflclickinfo["data"]["predictCommission"]}\n'
-                info += f'\n【其他信息】\n'    
-                info += f'    【昨日佣金】{get_ztmy["data"]}\n    【七日收入】{get_7my["data"]}\n    【本月预估结算】{jfflinfo["data"]["lastMonthAmount"]}\n    【下月预估结算】{jfflinfo["data"]["thisMonthAmount"]}'
+                info += f'\n【实时统计信息】\n'    
+                info += f'    【昨日佣金】{get_ztmy["data"]}\n    【七日收入】{get_7my["data"]}\n    【本月收入】{get_thismonth["data"]}\n    【上月收入】{get_lastmonth["data"]}\n'
+                info += f'\n【系统结算信息】\n'  
+                info += f'    【本月预估结算】{jfflinfo["data"]["lastMonthAmount"]}\n    【下月预估结算】{jfflinfo["data"]["thisMonthAmount"]}'
+
             elif 'no login' in jfdata['data']:
-                info += '查询失败，账号已过期'
+                info += f'查询失败，{pin}账号已过期'
             elif 'no register' in jfdata['data']:
-                info += '查询失败，返利未激活'
+                info += f'查询失败，{pin}返利未激活'
             else:
-                info += f'查询出错，错误详情\n{jfdata["data"], get_ztmy["data"], get_7my["data"]}'
+                info += f'查询出错，{pin}错误详情\n{jfdata["data"], get_ztmy["data"], get_7my["data"]}'
                 
         
         if waitsec==0:
